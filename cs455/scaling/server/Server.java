@@ -47,12 +47,15 @@ public class Server {
 				SocketChannel channel = (SocketChannel) key.channel();
 				
 				if	(key.isConnectable()) {	// Connect
+					channel.register(selector, SelectionKey.OP_CONNECT);
 					pool.execute(new Connect(key, channel));
 				}
 				if	(key.isReadable()) { // Read
+					channel.register(selector, SelectionKey.OP_READ);
 					pool.execute(new Read(key, channel));
 				}
 				if	(key.isWritable()) { // Write
+					channel.register(selector, SelectionKey.OP_WRITE);
 					byte[] temp = null; // Temporary, FIX THIS
 					pool.execute(new Write(key, channel, temp));
 				}	
