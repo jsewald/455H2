@@ -9,6 +9,10 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
+import Tasks.Connect;
+import Tasks.Read;
+import Tasks.Write;
+
 public class Server {
 
 	private ThreadPoolManager pool;
@@ -32,23 +36,31 @@ public class Server {
 		serverSocketChannel.bind(listeningAddressPort);
 
 		while (true) {	
-			//			wait	for	events	
+			
 			selector.select();	
-			//			wake	up	to	work	on	selected	keys
-			Iterator keys = selector.selectedKeys().iterator();	
-			while	(keys.hasNext())	{	
-				//more	housekeeping
-				if	(key.isAcceptable ())	{	
-					this.accept(key);	
+			Iterator<SelectionKey> keys = selector.selectedKeys().iterator();	
+			
+			while (keys.hasNext()) {
+				
+				key = keys.next();
+				keys.remove();
+				SocketChannel channel = (SocketChannel) key.channel();
+				
+				if	(key.isConnectable()) {	// Connect
+					pool.execute(new Connect(key, channel));
 				}
-				if	(key.isReadable ())	{	
-					this.read(key);	
+				if	(key.isReadable()) { // Read
+					pool.execute(new Read(key, channel));
 				}
-				if	(key.isWritable ())	{	
-					this.write(key);	
+				if	(key.isWritable()) { // Write
+					byte[] temp = null; // Temporary, FIX THIS
+					pool.execute(new Write(key, channel, temp));
 				}	
+				
 			}
+			
 		}
+		
 	}
 
 	private	void accept(SelectionKey key) throws IOException {
@@ -59,41 +71,41 @@ public class Server {
 		channel.register(selector,	SelectionKey.OP_READ);	
 	}	
 
-	private	void read(SelectionKey key)	throws	IOException {	
-		SocketChannel channel	=	(SocketChannel)	key.channel();	
-		ByteBuffer buffer	=	ByteBuffer.allocate(buffSize);
-		int read	=	0;	
-		try	{
-			while	(buffer.hasRemaining()	&&	read	!=	-1)	{	
-				read	=	channel.read(buffer);	
-			}	
-		}	catch	(IOException e)	{ /*	Abnormal	termination	*/	
-			server.disconnect(key);	return;	
-		}
-		if	(read	==	-1)	{
-			/*	Connection	was	terminated	by	the	client.	*/	
-			server.disconnect(key);
-			return;	
-		}
-		key.interestOps(SelectionKey.OP_WRITE);	
-	}	
+//	private	void read(SelectionKey key)	throws	IOException {	
+//		SocketChannel channel	=	(SocketChannel)	key.channel();	
+//		ByteBuffer buffer	=	ByteBuffer.allocate(buffSize);
+//		int read	=	0;	
+//		try	{
+//			while	(buffer.hasRemaining()	&&	read	!=	-1)	{	
+//				read	=	channel.read(buffer);	
+//			}	
+//		}	catch	(IOException e)	{ /*	Abnormal	termination	*/	
+//			server.disconnect(key);	return;	
+//		}
+//		if	(read	==	-1)	{
+//			/*	Connection	was	terminated	by	the	client.	*/	
+//			server.disconnect(key);
+//			return;	
+//		}
+//		key.interestOps(SelectionKey.OP_WRITE);	
+//	}	
 
 
-	private	void	write(SelectionKey key)	throws	IOException {	
-		SocketChannel channel	=	(SocketChannel)	key.channel();	
-		//You	have	your	data	stored	in	‘data’,	(type:	byte[])
-		ByteBuffer buffer	=	ByteBuffer.wrap(data);	
-		channel.write(buffer);	
-		key.interestOps(SelectionKey.OP_READ);	
-	}	
+//	private	void	write(SelectionKey key)	throws	IOException {	
+//		SocketChannel channel	=	(SocketChannel)	key.channel();	
+//		//You	have	your	data	stored	in	‘data’,	(type:	byte[])
+//		ByteBuffer buffer	=	ByteBuffer.wrap(data);	
+//		channel.write(buffer);	
+//		key.interestOps(SelectionKey.OP_READ);	
+//	}	
 
 
 
-	private	void	connect(SelectionKey key)	throws	IOException {	
-		SocketChannel channel	=	(SocketChannel)	key.channel();	
-		channel.finishConnect();	
-		key.interestOps(SelectionKey.OP_WRITE);	
-	}	
+//	private	void	connect(SelectionKey key)	throws	IOException {	
+//		SocketChannel channel	=	(SocketChannel)	key.channel();	
+//		channel.finishConnect();	
+//		key.interestOps(SelectionKey.OP_WRITE);	
+//	}	
 
 
 	public static void main(String[] args) throws NumberFormatException, Throwable {
