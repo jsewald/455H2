@@ -47,16 +47,13 @@ public class Server {
 				keys.remove();
 				SocketChannel channel = (SocketChannel) key.channel();
 				
-				if	(key.isConnectable()) {	// Connect
-					channel.register(selector, SelectionKey.OP_CONNECT);
-					pool.execute(new Connect(key, channel));
+				if	(key.isAcceptable()) {	// Accept
+					accept(key);
 				}
 				if	(key.isReadable()) { // Read
-					channel.register(selector, SelectionKey.OP_READ);
 					pool.execute(new Read(key, channel));
 				}
 				if	(key.isWritable()) { // Write
-					channel.register(selector, SelectionKey.OP_WRITE);
 					byte[] temp = null; // Temporary, FIX THIS
 					pool.execute(new Write(key, channel, temp));
 				}	
@@ -68,8 +65,11 @@ public class Server {
 	}
 
 	private	void accept(SelectionKey key) throws IOException {
-		ServerSocketChannel servSocket = (ServerSocketChannel)key.channel();	
-		SocketChannel channel = servSocket.accept();
+		ServerSocketChannel servSocket = (ServerSocketChannel)key.channel();
+		SocketChannel channel = null;
+		while (!channel.isConnected()) {
+			channel = servSocket.accept();
+		}
 		System.out.println("Accepting incoming	connection	");	
 		channel.configureBlocking(false);
 		channel.register(selector,	SelectionKey.OP_READ);	

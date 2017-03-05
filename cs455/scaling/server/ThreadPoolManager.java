@@ -6,16 +6,16 @@ import java.util.LinkedList;
 public class ThreadPoolManager {
 
 	private LinkedList<Runnable> taskQueue;
-	private ArrayList<Worker> workers;
+	private ArrayList<Thread> workers;
 
 	public ThreadPoolManager(int threadPoolSize) {
 
 		taskQueue = new LinkedList<Runnable>();
-		workers = new ArrayList<Worker>();
+		workers = new ArrayList<Thread>();
 
 		for (int i = 0; i < threadPoolSize; i++) {	 // Adds (threadPoolSize) threads to the thread pool
 
-			workers.add(new Worker(taskQueue));
+			workers.add(new Thread(new Worker(taskQueue)));
 
 		}
 
