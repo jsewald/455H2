@@ -9,9 +9,9 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-import Tasks.Connect;
-import Tasks.Read;
-import Tasks.Write;
+import tasks.Connect;
+import tasks.Read;
+import tasks.Write;
 
 public class Server {
 
@@ -32,6 +32,7 @@ public class Server {
 
 		serverSocketChannel = ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
+		selector = Selector.open();
 		key = serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 		serverSocketChannel.bind(listeningAddressPort);
 
@@ -96,7 +97,7 @@ public class Server {
 
 //	private	void	write(SelectionKey key)	throws	IOException {	
 //		SocketChannel channel	=	(SocketChannel)	key.channel();	
-//		//You	have	your	data	stored	in	‘data’,	(type:	byte[])
+//		//You	have	your	data	stored	in	ï¿½dataï¿½,	(type:	byte[])
 //		ByteBuffer buffer	=	ByteBuffer.wrap(data);	
 //		channel.write(buffer);	
 //		key.interestOps(SelectionKey.OP_READ);	
@@ -113,7 +114,7 @@ public class Server {
 
 	public static void main(String[] args) throws NumberFormatException, Throwable {
 
-		Server thisServer = new Server(new InetSocketAddress("localhost", Integer.parseInt(args[1])), Integer.parseInt(args[2]));
+		Server thisServer = new Server(new InetSocketAddress("localhost", Integer.parseInt(args[0])), Integer.parseInt(args[1]));
 		thisServer.startServer();
 
 	}
