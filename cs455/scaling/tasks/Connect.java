@@ -24,6 +24,7 @@ public class Connect implements Runnable {
 			channel.finishConnect();
 			System.out.println("Established Connection");
 			
+			
 		} catch (IOException e) {
 			
 			System.out.println("Exception in CONNECT");

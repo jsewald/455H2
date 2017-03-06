@@ -19,7 +19,6 @@ public class Server {
 	private InetSocketAddress listeningAddressPort;
 	private ServerSocketChannel serverSocketChannel;
 	private Selector selector;
-	private SelectionKey key;
 
 	public Server(InetSocketAddress listeningAddressPort, int threadPoolSize) throws Throwable {
 
@@ -33,7 +32,7 @@ public class Server {
 		serverSocketChannel = ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
 		selector = Selector.open();
-		key = serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 		serverSocketChannel.bind(listeningAddressPort);
 
 		while (true) {	
@@ -43,20 +42,23 @@ public class Server {
 			
 			while (keys.hasNext()) {
 				
-				key = keys.next();
+				SelectionKey key = keys.next();
 				keys.remove();
-				SocketChannel channel = (SocketChannel) key.channel();
 				
-				if	(key.isAcceptable()) {	// Accept
+				if (!key.isValid()) {
+					continue;
+				}
+				else if	(key.isAcceptable()) {	// Accept
 					accept(key);
 				}
-				if	(key.isReadable()) { // Read
-					pool.execute(new Read(key, channel));
+				else if	(key.isReadable()) { // Read
+					SocketChannel channel = (SocketChannel) key.channel();
+					pool.execute(new Read(pool, key, channel));
 				}
-				if	(key.isWritable()) { // Write
-					byte[] temp = null; // Temporary, FIX THIS
-					pool.execute(new Write(key, channel, temp));
-				}	
+//				else if	(key.isWritable()) { // Write
+//					byte[] temp = null; // Temporary, FIX THIS
+//					pool.execute(new Write(key, channel, temp));
+//				}	
 				
 			}
 			
@@ -67,10 +69,10 @@ public class Server {
 	private	void accept(SelectionKey key) throws IOException {
 		ServerSocketChannel servSocket = (ServerSocketChannel)key.channel();
 		SocketChannel channel = null;
-		while (!channel.isConnected()) {
+		while (channel == null) {
 			channel = servSocket.accept();
 		}
-		System.out.println("Accepting incoming	connection	");	
+		System.out.println("Accepting incoming connection");	
 		channel.configureBlocking(false);
 		channel.register(selector,	SelectionKey.OP_READ);	
 	}	

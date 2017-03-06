@@ -11,11 +11,11 @@ public class Write implements Runnable {
 	private SocketChannel channel;
 	private byte[] data;
 
-	public Write (SelectionKey key, SocketChannel channel, byte[] data) {
+	public Write (SelectionKey key, SocketChannel channel, String data) {
 
 		this.key = key;
 		this.channel = channel;
-		this.data = data;
+		this.data = data.getBytes();
 		
 	}
 
