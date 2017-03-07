@@ -22,15 +22,13 @@ public class Client {
 	private SelectionKey key;
 	private SocketChannel channel;
 	private LinkedList<String> hashCodes;
-	private Integer sentCount;
-	private Integer recievedCount;
+	private ClientStatisticsPrinter stats;
 
 	public Client(InetSocketAddress serverAddress, int messagingRate) {
 
 		this.messagingRate = messagingRate;
 		hashCodes = new LinkedList<String>();
-		sentCount = 0;
-		recievedCount = 0;
+		stats = new ClientStatisticsPrinter();
 
 		try {
 
@@ -65,6 +63,7 @@ public class Client {
 					continue;
 				}
 				if	(key.isConnectable()) {	// Connect
+					stats.start();
 					channel.finishConnect();
 					key.interestOps(SelectionKey.OP_READ);
 					startSending();
@@ -82,14 +81,16 @@ public class Client {
 
 	private void read(SelectionKey key) {
 
-		ByteBuffer buffer =	ByteBuffer.allocate(8000);
+		//System.out.println("Reading");
+		ByteBuffer buffer =	ByteBuffer.allocate(40);
 		int read = 0;	
 		
 		try	{
 			
 			while (buffer.hasRemaining() &&	read !=	-1) {	
 				
-				read = channel.read(buffer);	
+				read = channel.read(buffer);
+				//System.out.println("Read hash");
 				
 			}	
 			
@@ -111,14 +112,16 @@ public class Client {
 		byte[] temp = new byte[read];
 		System.arraycopy(buffer.array(), 0, temp, 0, read);
 		String hash = new String(temp);
+		//System.out.println("Got here");
 		
 		synchronized (hashCodes) {
 			for (String s: hashCodes) {
+				System.out.println("hash: " + hash);
+				System.out.println("hashCodes[s]: " + s);
 				if (hash.equals(s)) {
+					System.out.println("MATCH");
 					hashCodes.remove(s);
-					synchronized (recievedCount) {
-						recievedCount++;
-					}
+					stats.incrementReceivedCount();
 					break;
 				}
 			}
@@ -129,7 +132,7 @@ public class Client {
 
 	private void startSending() {
 
-		Thread sender = new Thread(new WriterThread(channel, key, messagingRate, hashCodes, sentCount));
+		Thread sender = new Thread(new WriterThread(channel, key, messagingRate, hashCodes, stats));
 		sender.start();
 
 	}

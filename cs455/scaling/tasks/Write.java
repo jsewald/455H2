@@ -27,6 +27,7 @@ public class Write implements Runnable {
 		try {
 			
 			channel.write(buffer);
+			//System.out.println("Wrote hash");
 			
 		} catch (IOException e) {
 			

@@ -14,17 +14,19 @@ import tasks.Write;
 
 public class WriterThread implements Runnable {
 	
-	SocketChannel channel;
-	SelectionKey key;
-	LinkedList<String> hashCodes;
-	Integer sentCount;
+	private SocketChannel channel;
+	private SelectionKey key;
+	private LinkedList<String> hashCodes;
+	private int rate;
+	private ClientStatisticsPrinter stats;
 	
-	public WriterThread(SocketChannel channel, SelectionKey key, int rate, LinkedList<String> hashCodes, Integer sentCount) {
+	public WriterThread(SocketChannel channel, SelectionKey key, int rate, LinkedList<String> hashCodes, ClientStatisticsPrinter stats) {
 		
 		this.channel = channel;
 		this.key = key;
+		this.rate = rate;
 		this.hashCodes = hashCodes;
-		this.sentCount = sentCount;
+		this.stats = stats;
 		
 	}
 	
@@ -42,6 +44,13 @@ public class WriterThread implements Runnable {
 		
 		while (channel.isConnected()) {
 			
+			try {
+				Thread.sleep(1000/rate);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			byte[] b = new byte[8000];
 			new Random().nextBytes(b);
 			
@@ -50,9 +59,8 @@ public class WriterThread implements Runnable {
 			try {
 				
 				channel.write(buffer);
-				synchronized (sentCount) {
-					sentCount++;
-				}
+				stats.incrementSentCount();
+				//System.out.println("Sent message");
 				
 			} catch (IOException e) {
 				

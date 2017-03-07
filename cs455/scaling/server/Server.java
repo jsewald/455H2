@@ -19,12 +19,14 @@ public class Server {
 	private InetSocketAddress listeningAddressPort;
 	private ServerSocketChannel serverSocketChannel;
 	private Selector selector;
+	private ServerStatisticsPrinter stats;
 
 	public Server(InetSocketAddress listeningAddressPort, int threadPoolSize) throws Throwable {
 
 		pool = new ThreadPoolManager(threadPoolSize);
 		this.listeningAddressPort = listeningAddressPort;
-
+		stats = new ServerStatisticsPrinter();
+		
 	}
 
 	private	void startServer() throws IOException {
@@ -34,6 +36,7 @@ public class Server {
 		selector = Selector.open();
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 		serverSocketChannel.bind(listeningAddressPort);
+		stats.start();
 
 		while (true) {	
 			
@@ -54,6 +57,7 @@ public class Server {
 				else if	(key.isReadable()) { // Read
 					SocketChannel channel = (SocketChannel) key.channel();
 					pool.execute(new Read(pool, key, channel));
+					stats.incrementMessageCount();
 				}
 //				else if	(key.isWritable()) { // Write
 //					byte[] temp = null; // Temporary, FIX THIS
@@ -72,7 +76,8 @@ public class Server {
 		while (channel == null) {
 			channel = servSocket.accept();
 		}
-		System.out.println("Accepting incoming connection");	
+		System.out.println("Accepting incoming connection");
+		stats.incrementClientCount();
 		channel.configureBlocking(false);
 		channel.register(selector,	SelectionKey.OP_READ);	
 	}	

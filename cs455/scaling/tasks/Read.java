@@ -48,6 +48,7 @@ public class Read implements Runnable {
 			while (buffer.hasRemaining() &&	read !=	-1) {	
 				
 				read = channel.read(buffer);	
+				//System.out.println("Read message");
 				
 			}	
 			
@@ -70,6 +71,7 @@ public class Read implements Runnable {
 		try {
 			
 			writeSHA1 = SHA1FromBytes(buffer.array());
+			System.out.println("Hash on server: " + writeSHA1);
 			
 		} catch (NoSuchAlgorithmException e) {
 			
