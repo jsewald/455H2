@@ -67,7 +67,7 @@ public class Client {
 					channel.finishConnect();
 					key.interestOps(SelectionKey.OP_READ);
 					startSending();
-					System.out.println("Established Connection");
+					//System.out.println("Established Connection");
 				}
 				else if	(key.isReadable()) { // Read
 					read(key);
@@ -87,6 +87,7 @@ public class Client {
 		
 		try	{
 			
+			
 			while (buffer.hasRemaining() &&	read !=	-1) {	
 				
 				read = channel.read(buffer);
@@ -98,7 +99,6 @@ public class Client {
 			
 			System.out.println("Abnormal termination in READ");
 			return;	
-			
 		}
 		
 		if	(read	==	-1)	{
@@ -116,8 +116,8 @@ public class Client {
 		
 		synchronized (hashCodes) {
 			for (String s: hashCodes) {
-				System.out.println("hash: " + hash);
-				System.out.println("hashCodes[s]: " + s);
+				System.out.println("Hashcode from Server: " + hash);
+				System.out.println("On Client, compare to: " + s);
 				if (hash.equals(s)) {
 					System.out.println("MATCH");
 					hashCodes.remove(s);
@@ -139,10 +139,10 @@ public class Client {
 
 	public static void main(String[] args) throws IOException {
 
-		System.out.println("CLIENT");
-		System.out.println("Host: " + args[0]);
-		System.out.println("Port: " + Integer.parseInt(args[1]));
-		System.out.println("Rate: " + Integer.parseInt(args[2]));
+//		System.out.println("CLIENT");
+//		System.out.println("Host: " + args[0]);
+//		System.out.println("Port: " + Integer.parseInt(args[1]));
+//		System.out.println("Rate: " + Integer.parseInt(args[2]));
 
 		Client thisClient = new Client(new InetSocketAddress(args[0], Integer.parseInt(args[1])), Integer.parseInt(args[2]));
 		thisClient.connectToServer();

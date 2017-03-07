@@ -71,7 +71,7 @@ public class Read implements Runnable {
 		try {
 			
 			writeSHA1 = SHA1FromBytes(buffer.array());
-			System.out.println("Hash on server: " + writeSHA1);
+			//System.out.println("Hash on server: " + writeSHA1);
 			
 		} catch (NoSuchAlgorithmException e) {
 			

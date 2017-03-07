@@ -76,7 +76,7 @@ public class Server {
 		while (channel == null) {
 			channel = servSocket.accept();
 		}
-		System.out.println("Accepting incoming connection");
+		//System.out.println("Accepting incoming connection");
 		stats.incrementClientCount();
 		channel.configureBlocking(false);
 		channel.register(selector,	SelectionKey.OP_READ);	
