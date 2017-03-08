@@ -1,4 +1,4 @@
-package client;
+package cs455.scaling.client;
 
 import java.sql.Timestamp;
 

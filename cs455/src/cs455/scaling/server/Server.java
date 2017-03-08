@@ -1,4 +1,4 @@
-package server;
+package cs455.scaling.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,9 +9,9 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-import tasks.Connect;
-import tasks.Read;
-import tasks.Write;
+import cs455.scaling.tasks.Connect;
+import cs455.scaling.tasks.Read;
+import cs455.scaling.tasks.Write;
 
 public class Server {
 

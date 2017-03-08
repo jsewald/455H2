@@ -1,4 +1,4 @@
-package client;
+package cs455.scaling.client;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.Random;
 
-import tasks.Write;
+import cs455.scaling.tasks.Write;
 
 public class WriterThread implements Runnable {
 	

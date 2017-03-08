@@ -1,4 +1,4 @@
-package client;
+package cs455.scaling.client;
 
 import java.awt.List;
 import java.io.IOException;
@@ -10,9 +10,9 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import server.Server;
-import tasks.Connect;
-import tasks.Read;
+import cs455.scaling.server.Server;
+import cs455.scaling.tasks.Connect;
+import cs455.scaling.tasks.Read;
 
 public class Client {
 

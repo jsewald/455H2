@@ -1,4 +1,4 @@
-package server;
+package cs455.scaling.server;
 
 import java.util.LinkedList;
 

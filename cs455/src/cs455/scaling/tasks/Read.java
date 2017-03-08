@@ -1,4 +1,4 @@
-package tasks;
+package cs455.scaling.tasks;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -8,8 +8,8 @@ import java.nio.channels.SocketChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import server.ServerStatisticsPrinter;
-import server.ThreadPoolManager;
+import cs455.scaling.server.ServerStatisticsPrinter;
+import cs455.scaling.server.ThreadPoolManager;
 
 public class Read implements Runnable {
 	

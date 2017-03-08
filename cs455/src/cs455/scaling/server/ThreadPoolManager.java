@@ -1,10 +1,10 @@
-package server;
+package cs455.scaling.server;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import tasks.Read;
-import tasks.Write;
+import cs455.scaling.tasks.Read;
+import cs455.scaling.tasks.Write;
 
 public class ThreadPoolManager {
 
