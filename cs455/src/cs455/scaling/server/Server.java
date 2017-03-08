@@ -73,16 +73,20 @@ public class Server {
 	}
 
 	private	void accept(SelectionKey key) throws IOException {
+		
 		ServerSocketChannel servSocket = (ServerSocketChannel)key.channel();
 		SocketChannel channel = null;
+		
 		while (channel == null) {
 			channel = servSocket.accept();
 		}
+		
 		//System.out.println("Accepting incoming connection");
 		stats.incrementClientCount();
 		channel.configureBlocking(false);
 		channel.register(selector,	SelectionKey.OP_READ);
 		acceptClient(key);
+		
 	}
 	
 	private void acceptClient(SelectionKey key) throws IOException {
