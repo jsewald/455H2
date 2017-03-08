@@ -15,8 +15,8 @@ public class Read implements Runnable {
 	
 	public SelectionKey key;
 	private SocketChannel channel;
-	ThreadPoolManager pool;
-	ServerStatisticsPrinter stats;
+	private ThreadPoolManager pool;
+	private ServerStatisticsPrinter stats;
 	
 	public Read (ThreadPoolManager pool, SelectionKey key, SocketChannel channel, ServerStatisticsPrinter stats) {
 		

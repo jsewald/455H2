@@ -145,6 +145,7 @@ public class Server {
 
 		Server thisServer = new Server(new InetSocketAddress("localhost", Integer.parseInt(args[0])), Integer.parseInt(args[1]));
 		thisServer.startServer();
+		System.out.println("Server starting...");
 
 	}
 

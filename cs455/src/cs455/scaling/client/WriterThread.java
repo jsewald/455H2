@@ -68,8 +68,7 @@ public class WriterThread implements Runnable {
 				
 			} catch (IOException e) {
 				
-				System.out.println("Exception in WRITE");
-				e.printStackTrace();
+				
 				
 			}
 			
