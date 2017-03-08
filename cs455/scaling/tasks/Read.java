@@ -8,19 +8,22 @@ import java.nio.channels.SocketChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import server.ServerStatisticsPrinter;
 import server.ThreadPoolManager;
 
 public class Read implements Runnable {
 	
-	private SelectionKey key;
+	public SelectionKey key;
 	private SocketChannel channel;
 	ThreadPoolManager pool;
+	ServerStatisticsPrinter stats;
 	
-	public Read (ThreadPoolManager pool, SelectionKey key, SocketChannel channel) {
+	public Read (ThreadPoolManager pool, SelectionKey key, SocketChannel channel, ServerStatisticsPrinter stats) {
 		
 		this.key = key;
 		this.channel = channel;
 		this.pool = pool;
+		this.stats = stats;
 		
 	}
 	
@@ -29,41 +32,55 @@ public class Read implements Runnable {
 		 MessageDigest digest = MessageDigest.getInstance("SHA1");
 		 byte[] hash = digest.digest(data);
 		 BigInteger hashInt = new BigInteger(1, hash);
-		 return hashInt.toString(16);
-		 
+		 String ret = hashInt.toString(16);
+		 while (ret.length() < 40) {
+			 ret += "=";
+		 }
+		 return ret;
+	
 		}
 
 	@Override
 	public void run() {
 		
+		
+		
+		//System.out.println(Thread.currentThread().getName() + " executing read");
+		
+		ByteBuffer buffer;
+		synchronized (channel) {
 		if (!key.isValid() || !channel.isConnected()) {
 			return;
 		}
 		
-		ByteBuffer buffer =	ByteBuffer.allocate(8000);
+		buffer =	ByteBuffer.allocate(8000);
 		int read = 0;	
 		
 		try	{
 			
 			while (buffer.hasRemaining() &&	read !=	-1) {	
 				
-				read = channel.read(buffer);	
+				read = channel.read(buffer);
+				
 				//System.out.println("Read message");
 				
 			}	
 			
 		} catch (IOException e) {
 			
-			System.out.println("Abnormal termination in READ");
+			//System.out.println("Abnormal termination in READ");
 			return;	
 			
 		}
 		
+		
 		if	(read	==	-1)	{
 			
-			System.out.println("Connection terminated by client");
+			//System.out.println("Connection terminated by client");
 			return;	
 			
+		}
+		stats.incrementMessageCount();
 		}
 		
 		String writeSHA1 = "";
@@ -80,8 +97,13 @@ public class Read implements Runnable {
 			
 		}
 		
-		pool.execute(new Write(key, channel, writeSHA1));
 		
+		
+		//synchronized (key) {
+		pool.execute(new Write(key, channel, writeSHA1));
+		//}
+		//new Write(key, channel, writeSHA1).run();
 	}
+	
 	
 }

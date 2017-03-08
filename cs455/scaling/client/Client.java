@@ -65,6 +65,7 @@ public class Client {
 				if	(key.isConnectable()) {	// Connect
 					stats.start();
 					channel.finishConnect();
+					System.out.println("Connected to server");
 					key.interestOps(SelectionKey.OP_READ);
 					startSending();
 					//System.out.println("Established Connection");
@@ -97,13 +98,13 @@ public class Client {
 			
 		} catch (IOException e) {
 			
-			System.out.println("Abnormal termination in READ");
+			//System.out.println("Abnormal termination in READ");
 			return;	
 		}
 		
 		if	(read	==	-1)	{
 			
-			System.out.println("Connection terminated by client");
+			//System.out.println("Connection terminated by client");
 			return;	
 			
 		}
@@ -115,16 +116,21 @@ public class Client {
 		//System.out.println("Got here");
 		
 		synchronized (hashCodes) {
+			boolean found = false;
 			for (String s: hashCodes) {
-				System.out.println("Hashcode from Server: " + hash);
-				System.out.println("On Client, compare to: " + s);
+				//System.out.println("Hashcode from Server: " + hash);
+				//System.out.println("On Client, compare to: " + s);
 				if (hash.equals(s)) {
-					System.out.println("MATCH");
+					//System.out.println("MATCH");
+					found = true;
 					hashCodes.remove(s);
 					stats.incrementReceivedCount();
 					break;
 				}
 			}
+//			if (!found) {
+//				System.out.println("Not found...");
+//			}
 		}
 		
 		

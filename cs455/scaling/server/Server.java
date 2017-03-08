@@ -44,7 +44,7 @@ public class Server {
 			Iterator<SelectionKey> keys = selector.selectedKeys().iterator();	
 			
 			while (keys.hasNext()) {
-				
+
 				SelectionKey key = keys.next();
 				keys.remove();
 				
@@ -56,8 +56,8 @@ public class Server {
 				}
 				else if	(key.isReadable()) { // Read
 					SocketChannel channel = (SocketChannel) key.channel();
-					pool.execute(new Read(pool, key, channel));
-					stats.incrementMessageCount();
+					pool.execute(new Read(pool, key, channel, stats));
+					
 				}
 //				else if	(key.isWritable()) { // Write
 //					byte[] temp = null; // Temporary, FIX THIS
@@ -65,6 +65,8 @@ public class Server {
 //				}	
 				
 			}
+			
+			pool.waitToFinish();
 			
 		}
 		
@@ -79,8 +81,24 @@ public class Server {
 		//System.out.println("Accepting incoming connection");
 		stats.incrementClientCount();
 		channel.configureBlocking(false);
-		channel.register(selector,	SelectionKey.OP_READ);	
-	}	
+		channel.register(selector,	SelectionKey.OP_READ);
+		acceptClient(key);
+	}
+	
+	private void acceptClient(SelectionKey key) throws IOException {
+		ServerSocketChannel servSocket = (ServerSocketChannel)key.channel();
+		SocketChannel channel = null;
+		do {
+			channel = servSocket.accept();
+			if (channel != null) {
+			stats.incrementClientCount();
+			channel.configureBlocking(false);
+			channel.register(selector,	SelectionKey.OP_READ);
+			}
+		} while(channel != null);
+		//System.out.println("Accepting incoming connection");
+			
+	}
 
 //	private	void read(SelectionKey key)	throws	IOException {	
 //		SocketChannel channel	=	(SocketChannel)	key.channel();	

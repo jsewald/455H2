@@ -35,7 +35,11 @@ public class WriterThread implements Runnable {
 		 MessageDigest digest = MessageDigest.getInstance("SHA1");
 		 byte[] hash = digest.digest(data);
 		 BigInteger hashInt = new BigInteger(1, hash);
-		 return hashInt.toString(16);
+		 String ret = hashInt.toString(16);
+		 while (ret.length() < 40) {
+			 ret += "=";
+		 }
+		 return ret;
 		 
 	}
 

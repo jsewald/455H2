@@ -43,13 +43,14 @@ public class ServerStatisticsPrinter extends Thread {
 			}
 
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			int trupa = 0;
+			double trupa = 0.0;
+			double seconds = 5.0;
 			synchronized (messageCount) {
-				trupa = messageCount / 5;
-			}
+				trupa = messageCount.doubleValue() / seconds;
+
 			System.out.println("[" + timestamp + "] Current Server Throughput: " + trupa + " messages/s, Active Client Connections: " + clientCount);
 
-			synchronized (messageCount) {
+
 				messageCount = 0;
 			}
 		}

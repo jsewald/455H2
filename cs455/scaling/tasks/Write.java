@@ -7,7 +7,7 @@ import java.nio.channels.SocketChannel;
 
 public class Write implements Runnable {
 	
-	private SelectionKey key;
+	public SelectionKey key;
 	private SocketChannel channel;
 	private byte[] data;
 
@@ -22,6 +22,10 @@ public class Write implements Runnable {
 	@Override
 	public void run() {
 		
+		//synchronized (key) {
+		
+		//System.out.println(Thread.currentThread().getName() + " executing write");
+		
 		ByteBuffer buffer =	ByteBuffer.wrap(data);
 		
 		try {
@@ -31,12 +35,13 @@ public class Write implements Runnable {
 			
 		} catch (IOException e) {
 			
-			System.out.println("Exception in WRITE");
+			//System.out.println("Exception in WRITE");
 			e.printStackTrace();
 			
 		}	
 		
 		key.interestOps(SelectionKey.OP_READ);	
+		//}
 
 	}
 

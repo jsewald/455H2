@@ -33,6 +33,9 @@ public class Worker extends Thread {
 				}
 				
 				task = (Runnable)taskQueue.removeFirst();	// Once notified that taskQueue is not empty, set task to first in LinkedList
+				if (taskQueue.isEmpty()) {
+					taskQueue.notifyAll();
+				}
 				
 			}
 			
