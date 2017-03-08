@@ -64,7 +64,7 @@ public class Client {
 				}
 				if	(key.isConnectable()) {	// Connect
 					stats.start();
-					channel.finishConnect();
+					while (!((SocketChannel) key.channel()).finishConnect());
 					System.out.println("Connected to server");
 					key.interestOps(SelectionKey.OP_READ);
 					startSending();

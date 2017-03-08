@@ -143,7 +143,7 @@ public class Server {
 
 	public static void main(String[] args) throws NumberFormatException, Throwable {
 
-		Server thisServer = new Server(new InetSocketAddress("localhost", Integer.parseInt(args[0])), Integer.parseInt(args[1]));
+		Server thisServer = new Server(new InetSocketAddress(Integer.parseInt(args[0])), Integer.parseInt(args[1]));
 		thisServer.startServer();
 		System.out.println("Server starting...");
 
